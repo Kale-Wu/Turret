@@ -24,7 +24,7 @@ def main():
                 # Draw landmarks on the frame
                 mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
-                
+            print("Nose coordinates:", get_Nose_coordinates(results.pose_landmarks, frame.shape[1], frame.shape[0]))
 
             # Display the frame
             cv2.imshow('Tracking Frame', frame)
@@ -32,9 +32,26 @@ def main():
             if cv2.waitKey(1) & 0xFF == 27: # Press 'Esc' to exit
                 break
     
-
     cap.release()
     cv2.destroyAllWindows()
+
+# All coordinates (0,0) at top-left
+def get_landmark_coordinates(landmarks, width, height):
+    coordinates = []
+    for landmark in landmarks.landmark:
+        x = int(landmark.x * width)
+        y = int(landmark.y * height)
+        coordinates.append((x, y))
+    return coordinates
+
+# Nose coordinates only
+def get_Nose_coordinates(landmarks, width, height):
+    if landmarks is None:
+        return None
+    nose = landmarks.landmark[mp.solutions.pose.PoseLandmark.NOSE]
+    x = int(nose.x * width)
+    y = int(nose.y * height)
+    return (x, y)
 
 
 main()
